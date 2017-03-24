@@ -1,0 +1,64 @@
+= Transaction Chain
+
+*WORK IN PROGRESS:* 
+
+https://github.com/google/protobuf/releases[protocol Buffer v3]
+
+.Compile protocol buf
+
+   export GOPATH=$GOPATH:`pwd`
+   cd src/pb
+   protoc --go_out=plugins=grpc:. txnchain.proto
+   protoc --go_out=plugins=grpc:. blockchain.proto
+
+https://en.wikipedia.org/wiki/Elliptic_curve_Diffie%E2%80%93Hellman[ECDH used by Blockchain Thunder]
+
+https://en.wikipedia.org/wiki/Curve25519[Curve25519 is an elliptic curve offering 128 bits of security and designed for use with the elliptic curve Diffie–Hellman (ECDH) key agreement scheme.]
+
+
+https://github.com/grpc/grpc-go[Golang GRPC GitHub]
+
+
+== Notes
+
+
+
+https://quintupledev.wordpress.com/2016/02/29/difference-between-uri-url-and-urn/[Difference between url, uri and urn.]
+
+https://en.wikipedia.org/wiki/Uniform_Resource_Name[URN]
+
+http://tools.ietf.org/html/rfc2141[URN Syntax, RFC 2141]
+
+.key and value pairs.
+
+key : Base64 encoding of a URN. 
+value: RAW Binary serialized protocol buffer content of an object (record)
+
+message Payload {
+  required binary key = 1;
+  required binary value = 2;
+  required Timestamp timestamp = 3;
+}  
+message Record {
+
+  required Payload = 1;
+  Sigature signed = ; 
+}
+
+service TxnStream 
+getLatestTxnTimeStamp
+Replay (AfterTime, BeforeTime) Stream of Payloads
+FindTxn (Key)
+
+Rely on GPG for key management
+
+== Resources
+https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes[kubernetes on digital ocean]
+
+https://github.com/libgit2/git2go[Go Git lib]
+
+https://github.com/syndtr/goleveldb[leveldb]
+
+https://github.com/syncthing/syncthing[syncthing]
+
+

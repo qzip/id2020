@@ -1,0 +1,102 @@
+/*
+Copyright (c) 2016, BON BIZ IT Services Pvt Ltd
+
+The Universal Permissive License (UPL), Version 1.0
+
+Subject to the condition set forth below, permission is hereby granted to any person obtaining a copy of this software, associated documentation and/or data (collectively the "Software"), free of charge and under any and all copyright rights in the Software, and any and all patent rights owned or freely licensable by each licensor hereunder covering either (i) the unmodified Software as contributed to or provided by such licensor, or (ii) the Larger Works (as defined below), to deal in both
+
+(a) the Software, and
+
+(b) any piece of software and/or hardware listed in the lrgrwrks.txt file if one is included with the Software (each a “Larger Work” to which the Software is contributed by such licensors),
+
+without restriction, including without limitation the rights to copy, create derivative works of, display, perform, and distribute the Software and make, use, sell, offer for sale, import, export, have made, and have sold the Software and the Larger Work(s), and to sublicense the foregoing rights on either these or other terms.
+
+This license is subject to the following condition:
+
+The above copyright notice and either this complete permission notice or at a minimum a reference to the UPL must be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+syntax = "proto3";
+
+package txnchain;
+
+// https://github.com/google/protobuf/blob/master/src/google/protobuf/timestamp.proto
+
+import "google/protobuf/timestamp.proto";
+import "multisig.proto";
+
+message Address {
+   string addressUUID = 1;
+   string personName  = 2;
+   string building    = 3;
+   string street      = 4;
+   string locality    = 5;
+   string city        = 6;
+   string state       = 7;
+   string country     = 8;
+   string encodedLocation  = 9;  //See BhuPatra class
+}
+
+message Person {
+   string    personUUID               = 1;
+   string    name                     = 2;
+   repeated  string accoundUUIDs      = 3;
+   repeated  string mobileNumbers     = 4;
+   repeated  string emailIds          = 5;
+   repeated  string socialIds         = 6;
+   string    primaryAddressId         = 7; 
+   repeated  string  otherAddressIds  = 8;
+   repeated  string   kycIds          = 9;
+   int64     dob                      = 10;
+
+}
+
+message KYC {
+  string kycUUID         = 1;
+  string encodedLocation = 2;   //See BhuPatra class
+  string documentType    = 3;
+  repeated string urls   = 4;
+  repeated string tags   = 5;
+
+}
+
+message Ledger {
+  string accountUUID                        = 1;
+  string walletProviderId                   = 2;
+  string mobileNumber                       = 3;
+  double balance                            = 4;
+  string productType                        = 5;
+  string currency                           = 6;
+  string lastTxnId                          = 7;
+  google.protobuf.Timestamp lastTxnDtTm     = 8;
+  HashDigest lastTxnDigest                  = 9;
+  bool freezed                              = 10;
+
+
+}
+
+
+// Snapshot payload will have all the fields, Person message is not loaded with nested Address/Addcounts & KYC values
+
+message ProfileSnapShot {
+   google.protobuf.Timestamp timestamp        = 1;
+   Person                    person           = 2;
+   repeated  Address         addresses        = 3; // includes primary address
+   repeated  KYC             kycs             = 4; 
+   repeated  Ledger          accountSnapshots = 5;
+}
+
+message Provider {
+    string walletProviderId              = 1;
+    string walletShortName               = 2;
+    string currency                      = 3;
+    string floatAccountUUID              = 4;
+    string nostraAccountIDs              = 5;
+    string primaryContact                = 6;
+    repeated string secondryContacts     = 7;
+    bool   freezed                       = 8;
+    repeated string     tags             = 9;
+}
+

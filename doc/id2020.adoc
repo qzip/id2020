@@ -1,0 +1,21 @@
+= ID2020
+
+
+http://www.ashishbanerjee.com/home/go/http-uuid-service
+
+----
+ab$ export GOPATH=$GOPATH:`pwd`
+ab$ cd src
+ab$ ls
+pb  tools  uuid
+ab$ cd tools/
+ab$ ls
+uid_srv.go  VerifyCert.go
+ab$ go run uid_srv.go 
+
+----
+
+----
+ab$ curl -X GET "http://127.0.0.1:12345/_uuid"
+{"uuid":["00c41e0f40f1223c807b71011a9ead45"]}
+----

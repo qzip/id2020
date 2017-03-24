@@ -1,0 +1,15 @@
+== ApacheDS
+
+.LDAP
+https://www.ietf.org/rfc/rfc2256.txt[RFC2256: LDAPv3 Schema]
+https://www.ietf.org/rfc/rfc2252.txt[RFC2252 extension for controlling subschema]
+
+----
+attributetype ( 2.5.4.0.46.7947.384 NAME 'ethereum'
+	DESC 'RFC2256 :objectClass:  2.5.4.0.;
+in.qzip.eth: 46.7947.384  (Mobile phone keypad alpha to numeric encoded)'
+	SUP objectClass
+	USAGE userApplications )
+
+----
+

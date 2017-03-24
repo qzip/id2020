@@ -1,0 +1,13 @@
+= Proof of Concept ID2020
+
+*WORK IN PROGRESS*
+
+This is the Milestone 0 Sprint 0 (M0S1)
+
+== Resources
+
+http://id2020.org[ID2020 UNDP site]
+
+https://goo.gl/hdmHQT[My Blog on ID2020]
+
+

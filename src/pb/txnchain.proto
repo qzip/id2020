@@ -1,0 +1,98 @@
+/*
+Copyright (c) 2016, BON BIZ IT Services Pvt Ltd
+
+The Universal Permissive License (UPL), Version 1.0
+
+Subject to the condition set forth below, permission is hereby granted to any person obtaining a copy of this software, associated documentation and/or data (collectively the "Software"), free of charge and under any and all copyright rights in the Software, and any and all patent rights owned or freely licensable by each licensor hereunder covering either (i) the unmodified Software as contributed to or provided by such licensor, or (ii) the Larger Works (as defined below), to deal in both
+
+(a) the Software, and
+
+(b) any piece of software and/or hardware listed in the lrgrwrks.txt file if one is included with the Software (each a “Larger Work” to which the Software is contributed by such licensors),
+
+without restriction, including without limitation the rights to copy, create derivative works of, display, perform, and distribute the Software and make, use, sell, offer for sale, import, export, have made, and have sold the Software and the Larger Work(s), and to sublicense the foregoing rights on either these or other terms.
+
+This license is subject to the following condition:
+
+The above copyright notice and either this complete permission notice or at a minimum a reference to the UPL must be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+syntax = "proto3";
+
+//package txnchain;
+option go_package = "pb";
+
+// https://github.com/google/protobuf/blob/master/src/google/protobuf/timestamp.proto
+
+import "google/protobuf/timestamp.proto";
+import "multisig.proto";
+
+/*
+message Timestamp {
+
+  // Represents seconds of UTC time since Unix epoch
+  // 1970-01-01T00:00:00Z. Must be from from 0001-01-01T00:00:00Z to
+  // 9999-12-31T23:59:59Z inclusive.
+  int64 seconds = 1;
+
+  // Non-negative fractions of a second at nanosecond resolution. Negative
+  // second values with fractions must still have non-negative nanos values
+  // that count forward in time. Must be from 0 to 999,999,999
+  // inclusive.
+  int32 nanos = 2;
+}
+*/
+
+
+
+message Txn {
+    string txnRef                           = 1; // set by sender
+    bytes data                              = 2;
+    google.protobuf.Timestamp  txnTmstamp   = 4;
+    repeated Signature         senderSig    = 5 ;  // multiple down stream app may sign
+}
+message Payload {
+     string                     key     = 1;
+     string                     urn     = 2;
+     Txn                        txnData = 3;
+     google.protobuf.Timestamp  tmstamp = 4;    
+     string                     prevKey = 5;
+     HashDigest                 prevPayloadDigest = 6;
+}
+message TxnChain {
+     Payload   payload = 1;
+     repeated  Signature sig = 2;
+}
+
+message TimeParam {
+   google.protobuf.Timestamp  fromTm   = 1;
+   google.protobuf.Timestamp  tillTm   = 2;
+}
+message PlayReq {
+  TimeParam timeFromTill = 1;  // empty value means play from now
+  repeated string txnUrn = 2;
+}
+message AddRes {
+   oneof res {
+      string   error = 1;
+      TxnChain txnChain = 2;
+   }
+}
+
+message FindReq {
+   oneof key {
+      string   txnRef = 1;
+      string   payloadKey = 2;
+      string   payloadUrn = 3;
+      google.protobuf.Timestamp  tmstamp = 4;
+   }
+   bool linkedChain = 5;
+}
+
+service TxnChainService {
+    rpc FindPayload(FindReq ) returns (stream TxnChain ){}
+    rpc Play(TimeParam  ) returns (stream TxnChain){}
+    rpc AddTxn(stream Txn) returns (stream AddRes){}
+}
+

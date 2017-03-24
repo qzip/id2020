@@ -1,0 +1,120 @@
+/*
+Copyright (c) 2016, BON BIZ IT Services Pvt Ltd
+
+The Universal Permissive License (UPL), Version 1.0
+
+Subject to the condition set forth below, permission is hereby granted to any person obtaining a copy of this software, associated documentation and/or data (collectively the "Software"), free of charge and under any and all copyright rights in the Software, and any and all patent rights owned or freely licensable by each licensor hereunder covering either (i) the unmodified Software as contributed to or provided by such licensor, or (ii) the Larger Works (as defined below), to deal in both
+
+(a) the Software, and
+
+(b) any piece of software and/or hardware listed in the lrgrwrks.txt file if one is included with the Software (each a “Larger Work” to which the Software is contributed by such licensors),
+
+without restriction, including without limitation the rights to copy, create derivative works of, display, perform, and distribute the Software and make, use, sell, offer for sale, import, export, have made, and have sold the Software and the Larger Work(s), and to sublicense the foregoing rights on either these or other terms.
+
+This license is subject to the following condition:
+
+The above copyright notice and either this complete permission notice or at a minimum a reference to the UPL must be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+syntax = "proto3";
+
+package walletxn;
+
+// https://github.com/google/protobuf/blob/master/src/google/protobuf/timestamp.proto
+
+import "google/protobuf/timestamp.proto";
+import "txnchain.proto";
+
+// A Wallet Txn Request can contain multiple accounts for dr/cr. The sum of all must be zero.
+// Txn currency must be same as that of the wallet base currency
+
+//---- copied from megh-upi.proto
+// TODO: Harmonize into common util protobuf
+// *NOTE:* The Messages for which Hash computation is required must not have a Map field since, 
+//         Map by definition is a bag; not an ordered set.
+
+message Tuple {
+    string name  = 1;
+    string value = 2;
+}
+
+message Meta {
+  repeated Tuple tag = 1 ;
+}
+
+//----
+
+
+message TxnLine {
+   string account = 1;
+   double amount = 2;
+   string narrative = 3;
+}
+
+message TxnResLine {
+   TxnLine txnLine = 1;
+   enum Status {
+     OK = 0;
+     INACTIVE_ACCOUNT     = 1;
+     ACCOUNT_NOT_FOUND    = 2;
+     INSUFFICIENT_BALANCE = 3;
+     TXN_TIMEOUT          =4;
+   }
+   Status status = 2; 
+   optional string error = 3; // optional 
+}
+
+message WalletTxnReq {
+   string   txnRef = 1; // set by sender
+   string   currency = 2;
+   repeated TxnLine txndetail  = 3;
+   string   narrative = 4;   
+   long     timeToLiveSec = 5;
+   Meta     header = 6;
+   
+   google.protobuf.Timestamp  tmstamp = 7;
+   bytes sha256  = 8;
+   repeated txnchain.Signature sig = 9 ;
+}
+
+message WalletTxnRes {
+   string   txnRef = 1; // set by sender
+   string   currency = 2;
+   string   txnId  = 3; // set by responder
+   bool     success =  4;
+   optional string   errorMsg = 5;
+   repeated TxnResLine txnResLines = 6 ;
+   Meta     header = 7;
+   
+   google.protobuf.Timestamp  tmstamp = 7;
+   bytes sha256  = 8;
+   repeated txnchain.Signature sig = 9 [packed=true];
+}
+
+message WalletRec {
+  required string    accountId  = 1;
+  required Amount    balance    = 2;
+  string             lastTxnId  = 3;
+  google.protobuf.Timestamp           timestamp  = 4;
+  bool               isActive   = 5;
+  string             pubKeyHash = 6;
+  repeated Tuple     tag        = 7 ;  
+} 
+
+message WalletTxnRec {
+   WalletTxnReq  txnReq = 1;
+   WalletTxnRes  txnRes =2;
+   repeated WalletRec  beforeState     = 3;
+   repeated WalletRec  afterState      = 4;
+   repeated Tuple      tag             = 5;
+   google.protobuf.Timestamp   tmstamp = 6;
+   bytes                       sha256  = 7;
+   repeated txnchain.Signature sig     = 8 ;
+   
+}
+
+// TODO: GPG encrypt and send to txnchain
+
+
