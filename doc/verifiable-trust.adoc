@@ -11,3 +11,9 @@ http://www.weboftrust.info/[Rebooting Web-of-Trust]
 https://www.sovrin.org/docs/[id4all]
 
 https://github.com/sovrin-foundation/sovrin-client/blob/stable/getting-started.md[Getting Started with Sovrin]
+
+
+https://mastanbtc.github.io/blockchainnotes/consensustypes/[type of consensus ]
+
+
+http://pmg.csail.mit.edu/papers/osdi99.pdf[MIT Practical Byzantine Fault Tolerance (pdf)]
